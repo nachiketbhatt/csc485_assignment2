@@ -59,11 +59,14 @@ def stop_tokenize(s: str) -> List[str]:
         >>> stop_tokenize('The Dance of Eternity, sir!')
         ['Dance', 'Eternity', 'sir']
     """
-    raise NotImplementedError
+    filtered = []
+    for word in word_tokenize(s):
+        if not (word in stopwords or word in punctuation):
+            filtered.append(word)
+    return filtered
 
 
 if __name__ == '__main__':
-    # import doctest
-    # doctest.testmod()
-    # deepest()
-    print(superdefn('toughen.v.01'))
+    import doctest
+    doctest.testmod()
+    deepest()
