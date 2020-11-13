@@ -38,8 +38,12 @@ def superdefn(s: str) -> List[str]:
         >>> superdefn('toughen.v.01')
         ['make', 'tough', 'or', 'tougher', 'gain', 'strength', 'make', 'fit']
     """
-    definition = wn.synset(s).definition()
-    return word_tokenize(definition)
+    definitions = wn.synset(s).definition()
+    for synset in wn.synset('toughen.v.01').hypernyms():
+        definitions += ' ' + synset.definition()
+    for synset in wn.synset('toughen.v.01').hyponyms():
+        definitions += ' ' + synset.definition()
+    return word_tokenize(definitions)
 
 
 def stop_tokenize(s: str) -> List[str]:
