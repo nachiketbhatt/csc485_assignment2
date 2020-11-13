@@ -62,7 +62,7 @@ def stop_tokenize(s: str) -> List[str]:
     filtered = []
     stop_words = set(stopwords.words("english"))
     for word in word_tokenize(s):
-        if not (word in stop_words or word in punctuation):
+        if not (word.lower() in stop_words or word in punctuation):
             filtered.append(word)
     return filtered
 
