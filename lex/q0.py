@@ -16,7 +16,7 @@ def deepest():
     Returns:
         None
     """
-    max_depth_synset = max(list(wn.all_synsets()), key=lambda synset: synset.max_dpeth())
+    max_depth_synset = max(wn.all_synsets(), key=lambda synset: synset.max_depth())
     print(max_depth_synset)
 
 
