@@ -38,7 +38,8 @@ def superdefn(s: str) -> List[str]:
         >>> superdefn('toughen.v.01')
         ['make', 'tough', 'or', 'tougher', 'gain', 'strength', 'make', 'fit']
     """
-    raise NotImplementedError
+    definition = wn.synset(s).definition()
+    return word_tokenize(definition)
 
 
 def stop_tokenize(s: str) -> List[str]:
@@ -61,3 +62,4 @@ if __name__ == '__main__':
     # import doctest
     # doctest.testmod()
     deepest()
+    print(superdefn('toughen.v.01'))
