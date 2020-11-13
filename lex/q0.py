@@ -61,5 +61,5 @@ def stop_tokenize(s: str) -> List[str]:
 if __name__ == '__main__':
     # import doctest
     # doctest.testmod()
-    deepest()
+    # deepest()
     print(superdefn('toughen.v.01'))
