@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-# Student name: NAME
-# Student number: NUMBER
-# UTORid: ID
+# Student name: Nachiket Bhatt
+# Student number: 1004703332
+# UTORid: bhattnac
 
 from string import punctuation
 from typing import *
 
 from nltk.corpus import stopwords, wordnet as wn
 from nltk.tokenize import word_tokenize
-
 
 def deepest():
     """Find and print the synset with the largest maximum depth along with its
@@ -17,7 +16,8 @@ def deepest():
     Returns:
         None
     """
-    raise NotImplementedError
+    max_depth_synset = max(list(wn.all_synsets()), key=lambda synset: synset.max_dpeth())
+    print(max_depth_synset)
 
 
 def superdefn(s: str) -> List[str]:
@@ -58,5 +58,6 @@ def stop_tokenize(s: str) -> List[str]:
 
 
 if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
+    # import doctest
+    # doctest.testmod()
+    deepest()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# Student name: NAME
-# Student number: NUMBER
-# UTORid: ID
+# Student name: Nachiket Bhatt
+# Student number: 1004703332
+# UTORid: bhattnac
 
 from collections import Counter, defaultdict
 from typing import *
