@@ -170,6 +170,7 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
             signature = signature.__add__(Counter(stop_tokenize(definition)))
             for example in examples:
                 signature = signature.__add__(Counter(stop_tokenize(example)))
+        score = 0
         dot_prodcut = 0
         for key in context.keys():
             if key in signature:
@@ -179,7 +180,8 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
             if key in signature:
                 norm_sig += signature[key] ** 2
         norm_sig = norm_sig ** 0.5
-        score = dot_prodcut / (norm_sig * norm_context)
+        if (norm_sig * norm_context) != 0:
+            score = dot_prodcut / (norm_sig * norm_context)
         if score > best_score:
             best_score = score
             best_sense = synset
