@@ -91,7 +91,8 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     best_sense = mfs(sentence, word_index)
     best_score = 0
     context = set([wsd.wordform for wsd in sentence])
-    for synset in wn.synsets(sentence[word_index].lemma):
+    for syn in sentence[word_index].synsets:
+        synset = wn.synset(syn)
         signature = set()
         definition = synset.definition()
         examples = synset.examples()
@@ -120,7 +121,7 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         if score > best_score:
             best_score = score
             best_sense = synset
-    raise NotImplementedError
+    return best_sense
 
 
 def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
@@ -146,7 +147,8 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     for key in context.keys():
         norm_context += context[key] ** 2
     norm_context = norm_context ** 0.5
-    for synset in wn.synsets(sentence[word_index].lemma):
+    for syn in sentence[word_index].synsets:
+        synset = wn.synset(syn)
         signature = Counter()
         definition = synset.definition()
         examples = synset.examples()
@@ -186,7 +188,7 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         if score > best_score:
             best_score = score
             best_sense = synset
-    raise NotImplementedError
+    return best_sense
 
 
 def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
