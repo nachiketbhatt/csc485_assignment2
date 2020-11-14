@@ -175,11 +175,12 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         for key in context.keys():
             if key in signature:
                 dot_prodcut += context[key] * signature[key]
-        norm_sig = 0
-        for key in context.keys():
-            norm_sig += signature[key] ** 2
-        if (norm_sig * norm_context) != 0:
-            score = dot_prodcut / ((norm_sig * norm_context) ** 0.5)
+        # norm_sig = 0
+        # for key in context.keys():
+        #     norm_sig += signature[key] ** 2
+        # if (norm_sig * norm_context) != 0:
+        #     score = dot_prodcut / ((norm_sig * norm_context) ** 0.5)
+        score = dot_prodcut
         if score > best_score:
             best_score = score
             best_sense = synset
