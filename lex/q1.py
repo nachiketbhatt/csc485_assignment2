@@ -62,11 +62,9 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         signature = set()
         definition = synset.definition()
         examples = synset.examples()
-        for word in stop_tokenize(definition):
-            signature.add(word)
+        signature = signature.union(set(stop_tokenize(definition)))
         for example in examples:
-            for word in stop_tokenize(example):
-                signature.add(word)
+            signature = signature.union(set(stop_tokenize(example)))
         score = len(context.intersection(signature))
         if score > best_score:
             best_score = score
@@ -123,7 +121,7 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         if score > best_score:
             best_score = score
             best_sense = synset
-    raise NotImplementedError
+    return best_sense
 
 
 def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
