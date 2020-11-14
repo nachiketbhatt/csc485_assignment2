@@ -8,6 +8,7 @@ from typing import *
 
 from nltk.corpus import wordnet as wn
 from nltk.corpus.reader.wordnet import Synset
+from nltk.tokenize import word_tokenize
 
 import numpy as np
 from numpy.linalg import norm
@@ -61,9 +62,9 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         signature = set()
         definition = synset.definition()
         examples = synset.examples()
-        signature = signature.union(set(stop_tokenize(definition)))
+        signature = signature.union(set(word_tokenize(definition)))
         for example in examples:
-            signature = signature.union(set(stop_tokenize(example)))
+            signature = signature.union(set(word_tokenize(example)))
         score = len(context.intersection(signature))
         if score > best_score:
             best_score = score
