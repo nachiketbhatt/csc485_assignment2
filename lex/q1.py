@@ -270,9 +270,9 @@ def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
 def _get_word_vec(word, vocab, word2vec):
     v, d = word2vec.shape
     if word in vocab:
-        return word2vec[vocab[word]][:]
+        return word2vec[vocab[word]]
     elif word.lower() in vocab:
-        return word2vec[vocab[word]][:]
+        return word2vec[vocab[word]]
     else:
         return np.zeros(d)
 
