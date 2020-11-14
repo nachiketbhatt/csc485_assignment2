@@ -145,9 +145,7 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     norm_context = 0
     for key in context.keys():
         norm_context += context[key] ** 2
-    norm_context = norm_context ** 0.5
-    for syn in sentence[word_index].synsets:
-        synset = wn.synset(syn)
+    for synset in wn.synsets(sentence[word_index].lemma):
         signature = Counter()
         definition = synset.definition()
         examples = synset.examples()
@@ -179,15 +177,13 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
                 dot_prodcut += context[key] * signature[key]
         norm_sig = 0
         for key in context.keys():
-            if key in signature:
-                norm_sig += signature[key] ** 2
-        norm_sig = norm_sig ** 0.5
+            norm_sig += signature[key] ** 2
         if (norm_sig * norm_context) != 0:
-            score = dot_prodcut / (norm_sig * norm_context)
+            score = dot_prodcut / ((norm_sig * norm_context) ** 0.5)
         if score > best_score:
             best_score = score
             best_sense = synset
-    raise NotImplementedError
+    return best_sense
 
 
 def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
