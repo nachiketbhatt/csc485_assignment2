@@ -56,7 +56,7 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     """
     best_sense = mfs(sentence, word_index)
     best_score = 0
-    context = set([wsd.wordform for wsd in sentence])
+    context = set([wsd.lemma for wsd in sentence])
     for synset in wn.synsets(sentence[word_index].lemma):
         signature = set()
         definition = synset.definition()
@@ -89,7 +89,7 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     """
     best_sense = mfs(sentence, word_index)
     best_score = 0
-    context = set([wsd.wordform for wsd in sentence])
+    context = set([wsd.lemma for wsd in sentence])
     for synset in wn.synsets(sentence[word_index].lemma):
         signature = set()
         definition = synset.definition()
@@ -140,7 +140,7 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     """
     best_sense = mfs(sentence, word_index)
     best_score = 0
-    context = Counter([wsd.wordform for wsd in sentence])
+    context = Counter([wsd.lemma for wsd in sentence])
     norm_context = 0
     for key in context.keys():
         norm_context += context[key] ** 2
