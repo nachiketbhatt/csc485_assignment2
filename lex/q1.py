@@ -68,7 +68,7 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         if score > best_score:
             best_score = score
             best_sense = synset
-    return best_sense
+    raise NotImplementedError
 
 
 def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
@@ -119,7 +119,7 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         if score > best_score:
             best_score = score
             best_sense = synset
-    return best_sense
+    raise NotImplementedError
 
 
 def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
@@ -182,7 +182,7 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         if score > best_score:
             best_score = score
             best_sense = synset
-    return best_sense
+    raise NotImplementedError
 
 
 def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
@@ -260,7 +260,7 @@ def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
                     signature += _get_word_vec(word, vocab, word2vec)
         score = 0
         if norm(signature) * norm(context) != 0:
-            score = np.dot(context, score) / (norm(signature) * norm(context))
+            score = np.dot(context, signature) / (norm(signature) * norm(context))
         if score > best_score:
             best_score = score
             best_sense = synset
