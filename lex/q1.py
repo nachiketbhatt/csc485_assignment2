@@ -59,7 +59,7 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     context = set([wsd.wordform for wsd in sentence])
     for synset in sentence[word_index].synsets:
         signature = set()
-        syn = Synset(synset)
+        syn = wn.synset(synset)
         definition = syn.definition()
         examples = syn.examples()
         signature.union(set(stop_tokenize(definition)))
