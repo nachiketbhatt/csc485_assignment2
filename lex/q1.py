@@ -8,7 +8,6 @@ from typing import *
 
 from nltk.corpus import wordnet as wn
 from nltk.corpus.reader.wordnet import Synset
-from nltk.tokenize import word_tokenize
 
 import numpy as np
 from numpy.linalg import norm
@@ -175,12 +174,11 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         for key in context.keys():
             if key in signature:
                 dot_prodcut += context[key] * signature[key]
-        # norm_sig = 0
-        # for key in context.keys():
-        #     norm_sig += signature[key] ** 2
-        # if (norm_sig * norm_context) != 0:
-        #     score = dot_prodcut / ((norm_sig * norm_context) ** 0.5)
-        score = dot_prodcut
+        norm_sig = 0
+        for key in context.keys():
+            norm_sig += signature[key] ** 2
+        if (norm_sig * norm_context) != 0:
+            score = dot_prodcut / ((norm_sig * norm_context) ** 0.5)
         if score > best_score:
             best_score = score
             best_sense = synset
@@ -221,7 +219,62 @@ def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
     Returns:
         Synset: The prediction of the correct sense for the given word.
     """
-    raise NotImplementedError
+    v, d = word2vec.shape
+    best_sense = mfs(sentence, word_index)
+    best_score = 0
+    context = np.zeros(d)
+    for word in [wsd.wordform for wsd in sentence]:
+        context += _get_word_vec(word, vocab, word2vec)
+    for synset in wn.synsets(sentence[word_index].lemma):
+        signature = np.zeros(d)
+        definition = synset.definition()
+        examples = synset.examples()
+        for word in stop_tokenize(definition):
+            signature += _get_word_vec(word, vocab, word2vec)
+        for example in examples:
+            for word in stop_tokenize(example):
+                signature += _get_word_vec(word, vocab, word2vec)
+        for hypo in synset.hyponyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            for word in stop_tokenize(definition):
+                signature += _get_word_vec(word, vocab, word2vec)
+            for example in examples:
+                for word in stop_tokenize(example):
+                    signature += _get_word_vec(word, vocab, word2vec)
+        for hypo in synset.member_holonyms() + synset.part_holonyms() + synset.substance_holonyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            for word in stop_tokenize(definition):
+                signature += _get_word_vec(word, vocab, word2vec)
+            for example in examples:
+                for word in stop_tokenize(example):
+                    signature += _get_word_vec(word, vocab, word2vec)
+        for hypo in synset.member_meronyms() + synset.part_meronyms() + synset.substance_meronyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            for word in stop_tokenize(definition):
+                signature += _get_word_vec(word, vocab, word2vec)
+            for example in examples:
+                for word in stop_tokenize(example):
+                    signature += _get_word_vec(word, vocab, word2vec)
+        score = 0
+        if norm(signature) * norm(context) != 0:
+            score = np.dot(context, score) / (norm(signature) * norm(context))
+        if score > best_score:
+            best_score = score
+            best_sense = synset
+    return best_sense
+
+
+def _get_word_vec(word, vocab, word2vec):
+    v, d = word2vec.shape
+    if word in vocab:
+        return word2vec[vocab[word]][:]
+    elif word.lower() in vocab:
+        return word2vec[vocab[word]][:]
+    else:
+        return np.zeros(d)
 
 
 if __name__ == '__main__':
