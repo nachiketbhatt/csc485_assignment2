@@ -57,6 +57,7 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     best_sense = mfs(sentence, word_index)
     best_score = 0
     context = set([wsd.wordform for wsd in sentence])
+    print(context)
     for synset in wn.synsets(sentence[word_index].lemma):
         signature = set()
         definition = synset.definition()
@@ -65,9 +66,6 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         for example in examples:
             signature.union(set(stop_tokenize(example)))
         score = len(context.intersection(signature))
-        print(synset)
-        print(score)
-        print()
         if score > best_score:
             best_score = score
             best_sense = synset
