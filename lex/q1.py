@@ -33,7 +33,8 @@ def mfs(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     Returns:
         Synset: The most frequent sense for the given word.
     """
-    raise NotImplementedError
+    syns = wn.synsets(sentence[word_index].lemma)
+    return syns[0]
 
 
 def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
@@ -53,7 +54,22 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     Returns:
         Synset: The prediction of the correct sense for the given word.
     """
-    raise NotImplementedError
+    best_sense = mfs(sentence, word_index)
+    best_score = 0
+    context = set([wsd.wordform for wsd in sentence])
+    for synset in sentence[word_index].synsets:
+        signature = set()
+        syn = Synset(synset)
+        definition = syn.definition()
+        examples = syn.examples()
+        signature.union(set(stop_tokenize(definition)))
+        for example in examples:
+            signature.union(set(stop_tokenize(example)))
+        score = len(context.intersection(signature))
+        if score > best_score:
+            best_score = score
+            best_sense = syn
+    return best_sense
 
 
 def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
