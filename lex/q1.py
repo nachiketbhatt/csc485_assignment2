@@ -138,7 +138,52 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     Returns:
         Synset: The prediction of the correct sense for the given word.
     """
-    raise NotImplementedError
+    best_sense = mfs(sentence, word_index)
+    best_score = 0
+    context = Counter([wsd.wordform for wsd in sentence])
+    norm_context = 0
+    for key in context.keys():
+        norm_context += context[key] ** 2
+    norm_context = norm_context ** 0.5
+    for synset in wn.synsets(sentence[word_index].lemma):
+        signature = Counter()
+        definition = synset.definition()
+        examples = synset.examples()
+        signature = signature + Counter(stop_tokenize(definition))
+        for example in examples:
+            signature = signature.__add__(Counter(stop_tokenize(example)))
+        for hypo in synset.hyponyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            signature = signature.__add__(Counter(stop_tokenize(definition)))
+            for example in examples:
+                signature = signature.__add__(Counter(stop_tokenize(example)))
+        for hypo in synset.member_holonyms() + synset.part_holonyms() + synset.substance_holonyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            signature = signature.__add__(Counter(stop_tokenize(definition)))
+            for example in examples:
+                signature = signature.__add__(Counter(stop_tokenize(example)))
+        for hypo in synset.member_meronyms() + synset.part_meronyms() + synset.substance_meronyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            signature = signature.__add__(Counter(stop_tokenize(definition)))
+            for example in examples:
+                signature = signature.__add__(Counter(stop_tokenize(example)))
+        dot_prodcut = 0
+        for key in context.keys():
+            if key in signature:
+                dot_prodcut += context[key] * signature[key]
+        norm_sig = 0
+        for key in context.keys():
+            if key in signature:
+                norm_sig += signature[key] ** 2
+        norm_sig = norm_sig ** 0.5
+        score = dot_prodcut / (norm_sig * norm_context)
+        if score > best_score:
+            best_score = score
+            best_sense = synset
+    return best_sense
 
 
 def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
