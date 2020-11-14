@@ -91,8 +91,7 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     best_sense = mfs(sentence, word_index)
     best_score = 0
     context = set([wsd.wordform for wsd in sentence])
-    for syn in sentence[word_index].synsets:
-        synset = wn.synset(syn)
+    for synset in wn.synsets(sentence[word_index].lemma):
         signature = set()
         definition = synset.definition()
         examples = synset.examples()
