@@ -102,7 +102,11 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
     """
     corpus = sorted(corpus, key=len)
     for batch_n in range(0, len(corpus), batch_size):
-        batch = corpus[batch_n:batch_n + batch_size]
+        if batch_n + batch_size < len(corpus):
+            batch = corpus[batch_n:batch_n + batch_size]
+        else:
+            batch = corpus[batch_n:len(corpus)]
+
         raise NotImplementedError
 
 
