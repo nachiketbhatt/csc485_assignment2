@@ -88,7 +88,40 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     Returns:
         Synset: The prediction of the correct sense for the given word.
     """
-    raise NotImplementedError
+    best_sense = mfs(sentence, word_index)
+    best_score = 0
+    context = set([wsd.wordform for wsd in sentence])
+    print(sentence[word_index].lemma)
+    for synset in wn.synsets(sentence[word_index].lemma):
+        signature = set()
+        definition = synset.definition()
+        examples = synset.examples()
+        signature = signature.union(set(stop_tokenize(definition)))
+        for example in examples:
+            signature = signature.union(set(stop_tokenize(example)))
+        for hypo in synset.hyponyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            signature = signature.union(set(stop_tokenize(definition)))
+            for example in examples:
+                signature = signature.union(set(stop_tokenize(example)))
+        for hypo in synset.member_holonyms() + synset.part_holonyms() + synset.substance_holonyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            signature = signature.union(set(stop_tokenize(definition)))
+            for example in examples:
+                signature = signature.union(set(stop_tokenize(example)))
+        for hypo in synset.member_meronyms() + synset.part_meronyms() + synset.substance_meronyms():
+            definition = hypo.definition()
+            examples = hypo.examples()
+            signature = signature.union(set(stop_tokenize(definition)))
+            for example in examples:
+                signature = signature.union(set(stop_tokenize(example)))
+        score = len(context.intersection(signature))
+        if score > best_score:
+            best_score = score
+            best_sense = synset
+    return best_sense
 
 
 def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
