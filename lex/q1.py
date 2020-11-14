@@ -272,7 +272,7 @@ def _get_word_vec(word, vocab, word2vec):
     if word in vocab:
         return word2vec[vocab[word]]
     elif word.lower() in vocab:
-        return word2vec[vocab[word]]
+        return word2vec[vocab[word.lower()]]
     else:
         return np.zeros(d)
 
