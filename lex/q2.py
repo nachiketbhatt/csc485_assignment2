@@ -118,7 +118,7 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
             ranges = []
             while i < len(mapping):
                 j = i + 1
-                while mapping[j][0] != 0 and j <= len(mapping):
+                while j < len(mapping) and mapping[j][0] != 0:
                     j += 1
                 ranges.append((i, j))
                 i = j
@@ -177,7 +177,7 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
     ranges = []
     while i < len(offset_mapping):
         j = i + 1
-        while offset_mapping[j][0] != 0 and j <= len(offset_mapping):
+        while j < len(offset_mapping) and offset_mapping[j][0] != 0:
             j += 1
         ranges.append((i, j))
         i = j
