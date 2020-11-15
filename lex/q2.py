@@ -101,15 +101,19 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
          [0, 0], [0, 0]]]
     """
     corpus = sorted(corpus, key=len)
-    # corpus = [[wsd.wordform for wsd in sentence] for sentence in corpus]
+    dic = {}
     for batch_n in range(0, len(corpus), batch_size):
         if batch_n + batch_size < len(corpus):
             batch = corpus[batch_n:batch_n + batch_size]
         else:
             batch = corpus[batch_n:len(corpus)]
-        tokens = tokenizer(batch, is_split_into_words=True, padding=True,
+        words = [[wsd.wordform for wsd in sentence] for sentence in batch]
+        tokens = tokenizer(words, is_split_into_words=True, padding=True,
                            return_tensors='pt', return_offsets_mapping=True)
-        print(len(tokens['input_ids'][0]))
+        vectors = bert_model(**tokens)
+        print(vectors.shape)
+        offset_mapping = tokens.pop('offset_mapping').tolist()
+
     return {}
 
 
@@ -141,6 +145,14 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
     Returns:
         Synset: The prediction of the correct sense for the given word.
     """
+    best_sense = mfs(sentence, word_index)
+    best_score = 0
+    for synset in wn.synsets(sentence[word_index].lemma):
+        score = 0
+        if score > best_score:
+            best_score = score
+            best_sense = synset
+    return best_sense
     raise NotImplementedError
 
 
