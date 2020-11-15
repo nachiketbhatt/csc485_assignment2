@@ -117,6 +117,9 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
             i, j = 0, 0
             ranges = []
             while i < len(mapping):
+                if mapping[i] == [0, 0]:
+                    i += 1
+                    continue
                 j = i + 1
                 while j < len(mapping) and mapping[j][0] != 0:
                     j += 1
@@ -170,11 +173,14 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
     words = [wsd.wordform for wsd in sentence]
     tokens = tokenizer(words, is_split_into_words=True, padding=True,
                           return_tensors='pt', return_offsets_mapping=True)
-    offset_mapping = tokens.pop('offset_mapping').tolist()
+    offset_mapping = tokens.pop('offset_mapping').tolist()[0]
     context_vector = bert_model(**tokens)[0]
     i = 0
     ranges = []
     while i < len(offset_mapping):
+        if offset_mapping[i] == [0, 0]:
+            i += 1
+            continue
         j = i + 1
         while j < len(offset_mapping) and offset_mapping[j][0] != 0:
             j += 1
