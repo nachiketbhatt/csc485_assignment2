@@ -112,7 +112,7 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
                            return_tensors='pt', return_offsets_mapping=True)
         offset_mapping = tokens.pop('offset_mapping').tolist()
         vectors = bert_model(**tokens)[0]
-        print(vectors.shape)
+        print(vectors[0][0][0])
 
     return {}
 
