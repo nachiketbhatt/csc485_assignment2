@@ -195,7 +195,7 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
         ranges.append((i, j))
         i = j
     context_vector = context_vector[0][ranges[word_index][0]:ranges[word_index][1]][:]
-    buf = torch.zeros_like(context_vector.shape[1])
+    buf = torch.zeros(context_vector.shape[1])
     for vec in context_vector:
         buf += vec
     buf = buf / len(context_vector)
