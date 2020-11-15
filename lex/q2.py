@@ -112,7 +112,28 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
                            return_tensors='pt', return_offsets_mapping=True)
         offset_mapping = tokens.pop('offset_mapping').tolist()
         vectors = bert_model(**tokens)[0]
-        print(vectors[0][0][0])
+        offset_align = []
+        for mapping in offset_mapping:
+            i, j = 0, 0
+            ranges = []
+            while i < len(mapping):
+                j = i + 1
+                while mapping[j][0] != 0 and j <= len(mapping):
+                    j += 1
+                ranges.append((i, j))
+                i = j
+            offset_align.append(ranges)
+        for i in range(len(batch)):
+            for j in range(len(batch[i])):
+                interval = offset_align[i][j]
+                for syn in batch[i][j].synsets:
+                    synset = wn.synset(syn)
+                    if synset not in dic:
+                        dic[synset] = np.empty(vectors.shape[2])
+                    dic[synset] = np.append(dic[synset], np.mean(vectors[i][interval[0]:interval[1]], axis=1), axis=0)
+    for key in dic.keys():
+        dic[key] = np.mean(dic[key], axis=1)
+
 
     return {}
 
@@ -147,13 +168,29 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
     """
     best_sense = mfs(sentence, word_index)
     best_score = 0
+    words = [wsd.wordform for wsd in sentence]
+    tokens = tokenizer(words, is_split_into_words=True, padding=True,
+                          return_tensors='pt', return_offsets_mapping=True)
+    offset_mapping = tokens.pop('offset_mapping').tolist()
+    context_vector = bert_model(**tokens)[0]
+    i = 0
+    ranges = []
+    while i < len(offset_mapping):
+        j = i + 1
+        while offset_mapping[j][0] != 0 and j <= len(offset_mapping):
+            j += 1
+        ranges.append((i, j))
+        i = j
+    context_vector = context_vector[0][ranges[word_index][0]:ranges[word_index][1]]
     for synset in wn.synsets(sentence[word_index].lemma):
         score = 0
+        if synset in sense_vectors:
+            signature = sense_vectors[synset]
+            score = np.dot(context_vector, signature) / (norm(context_vector) * norm(signature))
         if score > best_score:
             best_score = score
             best_sense = synset
     return best_sense
-    raise NotImplementedError
 
 
 if __name__ == '__main__':
@@ -171,4 +208,4 @@ if __name__ == '__main__':
         eval_data = load_eval()
 
         sense_vecs = gather_sense_vectors(train_data, bert_tok, bert)
-        # evaluate(eval_data, bert_1nn, bert_tok, bert, sense_vecs)
+        evaluate(eval_data, bert_1nn, bert_tok, bert, sense_vecs)
