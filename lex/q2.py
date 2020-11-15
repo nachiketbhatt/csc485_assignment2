@@ -109,7 +109,7 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
             batch = corpus[batch_n:len(corpus)]
         tokens = tokenizer(batch, is_split_into_words=True, padding=True,
                            return_tensors='pt', return_offsets_mapping=True)
-        print(len(tokens.pop('return_tensors').tolist()) == len(tokens.pop('offset_mapping').tolist()))
+        print(len(tokens.pop('pt').tolist()) == len(tokens.pop('offset_mapping').tolist()))
     return {}
 
 
