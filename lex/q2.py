@@ -133,13 +133,13 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
                     synset = wn.synset(syn)
                     if synset not in dic:
                         dic[synset] = []
-                    buf = np.zeros(vectors.shape[2])
+                    buf = torch.zeros(vectors.shape[2])
                     for k in range(interval[0], interval[1]):
                         buf += vectors[i][k][:]
                     buf = buf / (interval[1] - interval[0])
                     dic[synset].append(buf)
     for key in dic.keys():
-        buf = np.zeros(dic[key][0].shape)
+        buf = torch.zeros(dic[key][0].shape)
         for vec in dic[key]:
             buf += vec
         buf = buf / len(dic[key])
@@ -195,7 +195,7 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
         ranges.append((i, j))
         i = j
     context_vector = context_vector[0][ranges[word_index][0]:ranges[word_index][1]][:]
-    buf = np.zeros_like(context_vector.shape[1])
+    buf = torch.zeros_like(context_vector.shape[1])
     for vec in context_vector:
         buf += vec
     buf = buf / len(context_vector)
