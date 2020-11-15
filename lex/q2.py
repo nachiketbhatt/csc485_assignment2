@@ -101,7 +101,7 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
          [0, 0], [0, 0]]]
     """
     corpus = sorted(corpus, key=len)
-    corpus = [[wsd.wordform for wsd in sentence] for sentence in corpus]
+    # corpus = [[wsd.wordform for wsd in sentence] for sentence in corpus]
     for batch_n in range(0, len(corpus), batch_size):
         if batch_n + batch_size < len(corpus):
             batch = corpus[batch_n:batch_n + batch_size]
