@@ -144,7 +144,6 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
             buf += vec
         buf = buf / len(dic[key])
         dic[key] = buf
-        print(buf[:10])
     return dic
 
 
