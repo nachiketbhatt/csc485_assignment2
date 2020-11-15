@@ -176,8 +176,8 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
                 context_copy[key] = 0
         context_copy = OrderedDict(sorted(context_copy.items(), key=lambda t:t[0]))
         signature = OrderedDict(sorted(signature.items(), key=lambda t:t[0]))
-        context_vector = np.array(context_copy.values())
-        signature_vector = np.array(signature.values())
+        context_vector = np.array(list(context_copy.values()))
+        signature_vector = np.array(list(signature.values()))
         if (norm(signature_vector) * norm(context_vector)) != 0:
             score = np.dot(context_vector, signature_vector) / (norm(signature_vector) * norm(context_vector))
         if score > best_score:
