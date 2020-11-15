@@ -225,39 +225,50 @@ def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
     context = np.zeros(d)
     for word in [wsd.wordform for wsd in sentence]:
         context += _get_word_vec(word, vocab, word2vec)
+    context = context / len(sentence)
     for synset in wn.synsets(sentence[word_index].lemma):
         signature = np.zeros(d)
         definition = synset.definition()
         examples = synset.examples()
+        count = 0
         for word in stop_tokenize(definition):
             signature += _get_word_vec(word, vocab, word2vec)
+            count += 1
         for example in examples:
             for word in stop_tokenize(example):
                 signature += _get_word_vec(word, vocab, word2vec)
+                count += 1
         for hypo in synset.hyponyms():
             definition = hypo.definition()
             examples = hypo.examples()
             for word in stop_tokenize(definition):
                 signature += _get_word_vec(word, vocab, word2vec)
+                count += 1
             for example in examples:
                 for word in stop_tokenize(example):
                     signature += _get_word_vec(word, vocab, word2vec)
+                    count += 1
         for hypo in synset.member_holonyms() + synset.part_holonyms() + synset.substance_holonyms():
             definition = hypo.definition()
             examples = hypo.examples()
             for word in stop_tokenize(definition):
                 signature += _get_word_vec(word, vocab, word2vec)
+                count += 1
             for example in examples:
                 for word in stop_tokenize(example):
                     signature += _get_word_vec(word, vocab, word2vec)
+                    count += 1
         for hypo in synset.member_meronyms() + synset.part_meronyms() + synset.substance_meronyms():
             definition = hypo.definition()
             examples = hypo.examples()
             for word in stop_tokenize(definition):
                 signature += _get_word_vec(word, vocab, word2vec)
+                count += 1
             for example in examples:
                 for word in stop_tokenize(example):
                     signature += _get_word_vec(word, vocab, word2vec)
+                    count += 1
+        signature = signature / count
         score = 0
         if norm(signature) * norm(context) != 0:
             score = np.dot(context, signature) / (norm(signature) * norm(context))
