@@ -141,6 +141,9 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
     best_sense = mfs(sentence, word_index)
     best_score = 0
     context = Counter([wsd.wordform for wsd in sentence])
+    norm_context = 0
+    for key in context.keys():
+        norm_context += context[key] ** 2
     for synset in wn.synsets(sentence[word_index].lemma):
         signature = Counter()
         definition = synset.definition()
@@ -167,19 +170,15 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
             for example in examples:
                 signature = signature.__add__(Counter(stop_tokenize(example)))
         score = 0
-        context_copy = context.copy()
-        for key in context_copy.keys():
-            if key not in signature:
-                signature[key] = 0
-        for key in signature.keys():
-            if key not in context_copy:
-                context_copy[key] = 0
-        context_copy = OrderedDict(sorted(context_copy.items(), key=lambda t:t[0]))
-        signature = OrderedDict(sorted(signature.items(), key=lambda t:t[0]))
-        context_vector = np.array(list(context_copy.values()))
-        signature_vector = np.array(list(signature.values()))
-        if (norm(signature_vector) * norm(context_vector)) != 0:
-            score = np.dot(context_vector, signature_vector) / (norm(signature_vector) * norm(context_vector))
+        dot_prodcut = 0
+        for key in context.keys():
+            if key in signature:
+                dot_prodcut += context[key] * signature[key]
+        norm_sig = 0
+        for key in context.keys():
+            norm_sig += signature[key] ** 2
+        if (norm_sig * norm_context) != 0:
+            score = dot_prodcut / ((norm_sig * norm_context) ** 0.5)
         if score > best_score:
             best_score = score
             best_sense = synset
