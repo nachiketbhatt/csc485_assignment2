@@ -204,6 +204,7 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
         score = 0
         if synset in sense_vectors:
             signature = sense_vectors[synset]
+            signature = torch.from_numpy(signature)
             score = torch.dot(context_vector, signature) / (norm(context_vector) * norm(signature))
         if score > best_score:
             best_score = score
