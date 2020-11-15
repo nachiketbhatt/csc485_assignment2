@@ -135,7 +135,7 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
                         dic[synset] = []
                     buf = torch.zeros(vectors.shape[2])
                     for k in range(interval[0], interval[1]):
-                        buf += vectors[i][k][:]
+                        buf += vectors[i, k, :]
                     buf = buf / (interval[1] - interval[0])
                     dic[synset].append(buf)
     for key in dic.keys():
@@ -194,7 +194,7 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
             j += 1
         ranges.append((i, j))
         i = j
-    context_vector = context_vector[0][ranges[word_index][0]:ranges[word_index][1]][:]
+    context_vector = context_vector[0, ranges[word_index][0]:ranges[word_index][1], :]
     buf = torch.zeros(context_vector.shape[1])
     for vec in context_vector:
         buf += vec
@@ -204,7 +204,7 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
         score = 0
         if synset in sense_vectors:
             signature = sense_vectors[synset]
-            score = np.dot(context_vector, signature) / (norm(context_vector) * norm(signature))
+            score = torch.dot(context_vector, signature) / (norm(context_vector) * norm(signature))
         if score > best_score:
             best_score = score
             best_sense = synset
