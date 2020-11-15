@@ -101,13 +101,16 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
          [0, 0], [0, 0]]]
     """
     corpus = sorted(corpus, key=len)
+    corpus = [[wsd.wordform for wsd in sentence] for sentence in corpus]
     for batch_n in range(0, len(corpus), batch_size):
         if batch_n + batch_size < len(corpus):
             batch = corpus[batch_n:batch_n + batch_size]
         else:
             batch = corpus[batch_n:len(corpus)]
-
-        raise NotImplementedError
+        tokens = tokenizer(batch, is_split_into_words=True, padding=True,
+                           return_tensors='pt', return_offsets_mapping=True)
+        print(len(tokens.pop('tensors').tolist()) == len(tokens.pop('offset_mapping').tolist()))
+    return {}
 
 
 def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
@@ -156,4 +159,4 @@ if __name__ == '__main__':
         eval_data = load_eval()
 
         sense_vecs = gather_sense_vectors(train_data, bert_tok, bert)
-        evaluate(eval_data, bert_1nn, bert_tok, bert, sense_vecs)
+        # evaluate(eval_data, bert_1nn, bert_tok, bert, sense_vecs)
