@@ -110,9 +110,9 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
         words = [[wsd.wordform for wsd in sentence] for sentence in batch]
         tokens = tokenizer(words, is_split_into_words=True, padding=True,
                            return_tensors='pt', return_offsets_mapping=True)
+        offset_mapping = tokens.pop('offset_mapping').tolist()
         vectors = bert_model(**tokens)
         print(vectors.shape)
-        offset_mapping = tokens.pop('offset_mapping').tolist()
 
     return {}
 
