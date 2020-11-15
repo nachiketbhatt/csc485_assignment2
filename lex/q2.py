@@ -132,9 +132,9 @@ def gather_sense_vectors(corpus: List[List[WSDToken]],
                 for syn in batch[i][j].synsets:
                     synset = wn.synset(syn)
                     if synset not in dic:
-                        dic[synset] = np.mean(vectors[i][interval[0]:interval[1]], axis=1)
+                        dic[synset] = np.mean(vectors[i][interval[0]:interval[1]][:], axis=1)
                     else:
-                        dic[synset] = np.append(dic[synset], np.mean(vectors[i][interval[0]:interval[1]], axis=1), axis=0)
+                        dic[synset] = np.append(dic[synset], np.mean(vectors[i][interval[0]:interval[1]][:], axis=1), axis=0)
     for key in dic.keys():
         dic[key] = np.mean(dic[key], axis=1)
     return dic
@@ -186,7 +186,7 @@ def bert_1nn(sentence: Sequence[WSDToken], word_index: int,
             j += 1
         ranges.append((i, j))
         i = j
-    context_vector = context_vector[0][ranges[word_index][0]:ranges[word_index][1]]
+    context_vector = context_vector[0][ranges[word_index][0]:ranges[word_index][1]][:]
     for synset in wn.synsets(sentence[word_index].lemma):
         score = 0
         if synset in sense_vectors:
