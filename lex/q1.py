@@ -65,7 +65,7 @@ def lesk(sentence: Sequence[WSDToken], word_index: int) -> Synset:
         for example in examples:
             signature = signature.union(set(stop_tokenize(example)))
         score = len(context.intersection(signature))
-        if score > best_score:
+        if score >= best_score:
             best_score = score
             best_sense = synset
     return best_sense
@@ -116,7 +116,7 @@ def lesk_ext(sentence: Sequence[WSDToken], word_index: int) -> Synset:
             for example in examples:
                 signature = signature.union(set(stop_tokenize(example)))
         score = len(context.intersection(signature))
-        if score > best_score:
+        if score >= best_score:
             best_score = score
             best_sense = synset
     return best_sense
@@ -179,7 +179,7 @@ def lesk_cos(sentence: Sequence[WSDToken], word_index: int) -> Synset:
             norm_sig += signature[key] ** 2
         if (norm_sig * norm_context) != 0:
             score = dot_prodcut / ((norm_sig * norm_context) ** 0.5)
-        if score > best_score:
+        if score >= best_score:
             best_score = score
             best_sense = synset
     return best_sense
@@ -272,7 +272,7 @@ def lesk_w2v(sentence: Sequence[WSDToken], word_index: int,
         score = 0
         if norm(signature) * norm(context) != 0:
             score = np.dot(context, signature) / (norm(signature) * norm(context))
-        if score > best_score:
+        if score >= best_score:
             best_score = score
             best_sense = synset
     return best_sense
