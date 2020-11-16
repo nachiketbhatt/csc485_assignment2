@@ -17,7 +17,32 @@ def deepest():
         None
     """
     max_depth_synset = max(wn.all_synsets(), key=lambda synset: synset.max_depth())
-    print(max_depth_synset)
+    print("Synset with max depth is:", max_depth_synset)
+    print()
+    print("Routes from max depth synset to a root hyperonym:")
+    results = paths(max_depth_synset)
+    for path in results:
+        print_path(path)
+        print()
+
+
+def paths(synset):
+    if not synset.hypernyms():
+        return [[synset]]
+    else:
+        results = []
+        for hyp in synset.hypernyms():
+            for path in paths(hyp):
+                results.append(path)
+        results = [[synset] + path for path in results]
+        return results
+
+
+def print_path(path):
+    if len(path) == 0:
+        return
+    print(path[0], "at depth", len(path) - 1)
+    print_path(path[1:])
 
 
 def superdefn(s: str) -> List[str]:
@@ -68,5 +93,6 @@ def stop_tokenize(s: str) -> List[str]:
 
 
 if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
+    # import doctest
+    # doctest.testmod()
+    deepest()
